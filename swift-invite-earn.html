@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Swift Invite Earn</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Noto+Sans+Ethiopic:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<style>
+:root{--bg:#04070d;--blue:#2ea8ff;--orange:#ff8a1f;--green:#19e68c;--text:#f2f9ff;--mut:#97b8d6;--ink:#050b14;--sp:cubic-bezier(.3,1.5,.5,1)}
+*{box-sizing:border-box;font-weight:800;font-family:'Fredoka','Noto Sans Ethiopic',system-ui,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
+input{user-select:text}
+body{margin:0;color:var(--text);min-height:100vh;padding:14px 14px 104px;overflow-x:hidden;background:var(--bg)}
+/* top glow like the reference */
+.glow{position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+ radial-gradient(120% 55% at 50% -8%,#6db6ff 0,#2f7fdc 22%,#12348a 48%,transparent 72%),
+ radial-gradient(60% 40% at 0% 100%,#ff8a1f55,transparent 70%),
+ radial-gradient(60% 40% at 100% 85%,#19e68c40,transparent 70%),
+ linear-gradient(#0b1230 0,#05080f 60%)}
+.glow::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 30% at 50% 0,#9fd2ff55,transparent);animation:pulse 4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+.card,nav,.toast,.fxcard{background:linear-gradient(145deg,#ffffff30,#ffffff0a 50%,#2ea8ff12);backdrop-filter:blur(26px) saturate(200%);-webkit-backdrop-filter:blur(26px) saturate(200%);border:1px solid #ffffff3d;box-shadow:inset 0 1.5px 0 #ffffff77,inset 0 -1px 0 #ffffff1c,0 12px 36px #0000006b,0 0 28px #2ea8ff22}
+.card{border-radius:26px;padding:16px;margin:12px 0;position:relative;overflow:hidden;animation:pop .38s var(--sp) both}
+.card::before{content:"";position:absolute;top:0;left:-70%;width:40%;height:100%;background:linear-gradient(100deg,transparent,#ffffff2e,transparent);transform:skewX(-20deg);animation:shine 7s infinite}
+@keyframes shine{0%,75%{left:-70%}100%{left:140%}}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+#app .card:nth-child(2){animation-delay:.05s}#app .card:nth-child(3){animation-delay:.1s}#app .card:nth-child(4){animation-delay:.15s}#app .card:nth-child(5){animation-delay:.2s}
+.top{display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px}.logo svg{filter:drop-shadow(0 0 14px var(--blue));animation:wob 3.5s ease-in-out infinite}
+@keyframes wob{50%{transform:rotate(7deg) scale(1.07)}}
+h1{font-size:19px;margin:0;background:linear-gradient(90deg,#fff,var(--blue) 50%,var(--orange));-webkit-background-clip:text;color:transparent}
+.prof{display:flex;align-items:center;gap:14px}
+.av{width:70px;height:70px;border-radius:50%;border:3px solid var(--orange);box-shadow:0 0 0 4px #ff8a1f33,0 0 26px var(--orange);object-fit:cover;background:linear-gradient(135deg,var(--blue),var(--green));display:grid;place-items:center;font-size:30px;color:var(--ink);animation:ring 2.6s infinite}
+@keyframes ring{50%{box-shadow:0 0 0 9px #ff8a1f11,0 0 36px var(--blue)}}
+.hi{font-size:21px}.hi span{display:inline-block;animation:wave 1.8s infinite;transform-origin:70% 70%}
+@keyframes wave{0%,60%,100%{transform:rotate(0)}10%,30%{transform:rotate(18deg)}20%,40%{transform:rotate(-12deg)}}
+.id{display:inline-block;margin-top:4px;background:#050b1488;border:1px solid #ffffff2e;border-radius:20px;padding:3px 11px;font-size:12px;color:var(--blue)}
+.bal{font-size:40px;color:var(--orange);text-shadow:0 0 22px #ff8a1f88}
+.mut{color:var(--mut);font-size:12px;letter-spacing:.3px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.grid div{background:#050b1466;border-radius:16px;padding:10px 4px;text-align:center;border:1px solid #ffffff1f}
+.grid b{display:block;font-size:19px;color:var(--green)}
+/* liquid buttons */
+button{position:relative;overflow:hidden;border:0;border-radius:20px;padding:14px;color:var(--ink);font-size:15px;width:100%;margin-top:10px;cursor:pointer;background:linear-gradient(180deg,#ffc37a,var(--orange) 55%,#e66a00);box-shadow:inset 0 2px 0 #ffffffaa,inset 0 -3px 0 #0000002e,0 6px 0 #8a3d00,0 12px 24px #ff8a1f55;transition:transform .14s var(--sp),box-shadow .14s}
+button.g{background:linear-gradient(180deg,#9dffd0,var(--green) 55%,#0fb870);box-shadow:inset 0 2px 0 #ffffffaa,inset 0 -3px 0 #0000002e,0 6px 0 #07673c,0 12px 24px #19e68c55}
+button.b{background:linear-gradient(180deg,#9fd8ff,var(--blue) 55%,#0b7fd6);box-shadow:inset 0 2px 0 #ffffffaa,inset 0 -3px 0 #0000002e,0 6px 0 #0a4a80,0 12px 24px #2ea8ff55}
+button.alt{background:linear-gradient(180deg,#ffffff3d,#ffffff14);color:var(--text);box-shadow:inset 0 2px 0 #ffffff66,0 6px 0 #02050acc}
+button.red{background:linear-gradient(180deg,#ff8aa0,#ff4d6d);width:auto;padding:6px 12px;margin:0;box-shadow:0 4px 0 #7a1226}
+button:active{transform:translateY(5px) scale(.97);box-shadow:inset 0 2px 0 #ffffff88,0 1px 0 #0006,0 4px 12px #0005}
+button .rip{position:absolute;border-radius:50%;background:#fffa;transform:scale(0);animation:rip .5s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(4);opacity:0}}
+input{width:100%;padding:13px;border-radius:16px;border:2px solid #ffffff3a;background:#050b1488;color:var(--text);margin-top:10px;font-size:14px;outline:none;transition:.2s}
+input:focus{border-color:var(--blue);box-shadow:0 0 20px #2ea8ff77}
+nav{position:fixed;bottom:12px;left:12px;right:12px;display:flex;border-radius:28px;padding:6px;z-index:5}
+nav a{flex:1;text-align:center;font-size:11px;color:var(--mut);padding:8px 2px;border-radius:22px;transition:.28s var(--sp)}
+nav a.on{color:var(--ink);background:linear-gradient(180deg,#ffc37a,var(--orange));transform:translateY(-7px) scale(1.08);box-shadow:0 8px 18px #ff8a1f77}
+nav a:active{transform:scale(.9)}
+nav a i{display:block;font-style:normal;font-size:20px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #ffffff1f;font-size:13px}
+.ok{color:var(--green)}.bad{color:#ff7a90}
+.bar{height:14px;background:#050b1488;border-radius:10px;overflow:hidden;margin-top:8px;border:1px solid #ffffff22}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--orange) 0 10px,#ffb25e 10px 20px);background-size:28px 28px;animation:stripe .8s linear infinite;transition:width .8s var(--sp);border-radius:10px}
+@keyframes stripe{to{background-position:28px 0}}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);padding:11px 18px;border-radius:20px;z-index:99;font-size:13px;animation:drop .35s var(--sp)}
+@keyframes drop{from{transform:translate(-50%,-80px)}}
+.view{animation:slide .3s cubic-bezier(.2,1,.3,1)}
+@keyframes slide{from{opacity:0;transform:translateX(28px)}}
+/* live log */
+.live{display:flex;align-items:center;gap:8px}.dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 var(--green);animation:ping 1.5s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 10px #19e68c00}100%{box-shadow:0 0 0 0 #19e68c00}}
+.lg{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #ffffff1c;animation:lgin .45s var(--sp)}
+@keyframes lgin{from{opacity:0;transform:translateX(-30px) scale(.9)}}
+.lg .ic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--green),var(--blue));font-size:18px}
+.lg .u{flex:1;font-size:13px}.lg .a{color:var(--orange);font-size:15px}
+/* withdraw fx */
+.fx{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#02040acc;backdrop-filter:blur(8px);animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.fxcard{width:84%;max-width:340px;border-radius:34px;padding:26px 18px;text-align:center;position:relative;overflow:hidden;min-height:290px;animation:pop .4s var(--sp)}
+.vault{font-size:78px;animation:vb .45s infinite alternate;display:inline-block;filter:drop-shadow(0 0 22px var(--orange))}
+@keyframes vb{to{transform:scale(1.12) rotate(5deg)}}
+.coin{position:absolute;top:-30px;font-size:30px;animation:fall .9s ease-in forwards}
+@keyframes fall{to{top:150px;opacity:.2;transform:rotate(540deg) scale(.4)}}
+.fly{animation:fly .8s cubic-bezier(.6,-.4,.8,.4) forwards!important}
+@keyframes fly{to{transform:translateY(-420px) scale(.3) rotate(-20deg);opacity:0}}
+.chk{width:110px;height:110px;margin:0 auto}
+.chk circle{stroke-dasharray:300;stroke-dashoffset:300;animation:dr .6s .1s forwards}
+.chk path{stroke-dasharray:80;stroke-dashoffset:80;animation:dr .4s .6s forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+.conf{position:fixed;top:-20px;width:10px;height:14px;z-index:101;animation:cf 2.2s ease-out forwards}
+@keyframes cf{to{transform:translateY(105vh) rotate(720deg)}}
+.step{margin-top:12px;font-size:16px;min-height:24px}
+.tapwrap{display:grid;place-items:center;padding:14px 0 6px}
+.tapbtn{width:230px;height:230px;border-radius:50%;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;background:radial-gradient(circle at 35% 28%,#c8e8ff,var(--blue) 45%,#0a4fa8);box-shadow:inset 0 6px 0 #ffffffaa,inset 0 -16px 30px #00000055,0 0 0 10px #2ea8ff22,0 0 64px #2ea8ffaa,0 14px 0 #08306a;transition:transform .07s,box-shadow .07s}
+.tapbtn.p,.tapbtn:active{transform:translateY(11px) scale(.96);box-shadow:inset 0 6px 0 #ffffffaa,inset 0 -16px 30px #00000055,0 0 0 16px #2ea8ff33,0 0 90px #ff8a1f99,0 3px 0 #08306a}
+.tapbtn svg{pointer-events:none;filter:drop-shadow(0 5px 10px #0007)}
+.tapbtn.off{filter:grayscale(.85) brightness(.55)}
+.fl{position:fixed;pointer-events:none;color:var(--orange);font-size:20px;z-index:60;text-shadow:0 0 12px #ff8a1f;animation:fl .9s ease-out forwards}
+@keyframes fl{to{transform:translateY(-95px) scale(1.35);opacity:0}}
+</style></head><body>
+<div class="glow"></div>
+<div class="top"><div class="logo">
+<svg width="46" height="46" viewBox="0 0 100 100"><polygon points="50,4 58,30 80,20 70,42 96,50 70,58 82,84 56,70 50,96 42,70 18,82 30,58 4,50 30,42 18,20 42,30" fill="#2ea8ff" stroke="#2ea8ff" stroke-width="9" stroke-linejoin="round"/><ellipse cx="42" cy="50" rx="4.5" ry="6.5" fill="#04070d"/><ellipse cx="58" cy="50" rx="4.5" ry="6.5" fill="#04070d"/></svg>
+<h1>Swift Invite Earn</h1></div><button class="lang alt" id="lang" onclick="toggleLang()" style="width:auto;margin:0;padding:8px 14px;font-size:12px"></button></div>
+<div id="app"></div><nav id="nav"></nav>
+<script>
+/* ================= CONFIG ================= */
+const CONFIG={
+  BOT_TOKEN:"9247043015:AAHo26xQZhcje_yhguni6Fm6DuAFPE7bty0",
+  BOT_USERNAME:"YourBotUsername",   // without @
+  APP_SHORT_NAME:"",                // optional Mini App short name
+  OWNER_ID:8693389597,
+  LOG_CHANNEL:"@swiftpaymentLog",
+  API_BASE:"",                      // shared server (for cross-user balances & live log)
+  REWARD:2, MIN_WITHDRAW:100, MIN_REFS:15,
+  TAP_REWARD:0.001, TAP_BASE:100, TAP_STEP:50, ADS_PER_UPGRADE:5, MAX_TAP_LEVEL:10,
+  ADSGRAM_BLOCK_ID:""              // get it from adsgram.ai (see instructions)
+};
+const tg=window.Telegram?.WebApp;tg?.ready();tg?.expand();tg?.setHeaderColor?.("#12348a");tg?.setBackgroundColor?.("#04070d");
+const TU=tg?.initDataUnsafe?.user||{id:Number(localStorage.demoId||(localStorage.demoId=Math.floor(1e9*Math.random()))),first_name:"Demo"};
+if(localStorage.demoAdmin==="1")TU.id=CONFIG.OWNER_ID;
+const REF=tg?.initDataUnsafe?.start_param||new URLSearchParams(location.search).get("ref")||"";
+const isOwner=TU.id===CONFIG.OWNER_ID;
+const $=s=>document.querySelector(s);
+
+/* ================= TELEGRAM BOT API (direct) ================= */
+async function bot(method,params={},form){
+  try{const r=await fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/${method}`,form?{method:"POST",body:form}:{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(params)});return await r.json()}catch(e){return{ok:false}}
+}
+async function joinedAll(chs){
+  if(!tg||!CONFIG.BOT_TOKEN)return true; // outside Telegram: preview
+  for(const c of chs){const r=await bot("getChatMember",{chat_id:c,user_id:TU.id});
+    if(!r.ok||!["member","administrator","creator"].includes(r.result.status))return false}
+  return true;
+}
+const mask=s=>{s=String(s||"");const k=Math.ceil(s.length/2);return s.slice(0,k)+"#".repeat(s.length-k)};
+const ago=ts=>{const s=(Date.now()-ts)/1e3;return s<60?"now":s<3600?Math.floor(s/60)+"m":s<86400?Math.floor(s/3600)+"h":Math.floor(s/86400)+"d"};
+
+/* ================= LANGUAGE ================= */
+const I={en:{hi:"Hi",bal:"YOUR BALANCE",refs:"Referrals",per:"Per invite",min:"Min payout",unlock:"WITHDRAW UNLOCK",ref:"referrals",link:"YOUR INVITE LINK",share:"🚀 Share & Earn",copy:"📋 Copy Link",copied:"Copied 🔗",home:"Home",join:"Join",top:"Top",wd:"Withdraw",admin:"Admin",must:"JOIN ALL CHANNELS TO BE ELIGIBLE",none:"No channels required yet.",jbtn:"Join",verify:"✅ I Joined – Verify",elig:"✔ You are eligible",nelig:"✖ Not verified yet",notj:"You haven't joined all channels ❌",board:"🏆 TOP INVITERS",first:"Be the first!",reqwd:"REQUEST WITHDRAWAL",balance:"Balance",eligible:"Eligible",yes:"Yes",joinfirst:"Join channels first",addr:"Telebirr / CBE account number",wdall:"💸 Withdraw All",note:"Proof is posted publicly in",dupe:"⚠️ Another account was already used on this device. Referral rewards are disabled for you.",banned:"🚫 You are banned",lvl:["🌱 Rookie","🥉 Bronze","🥈 Silver","🥇 Gold","💎 Diamond"],s1:"Counting your Birr…",s2:"Packing your vault…",s3:"Sending to admin…",done:"Request Sent! 🎉",wait:"Admin will pay & post proof in the log.",ch:"CHANNELS (bot must be admin there)",addch:"➕ Add Channel",set:"SETTINGS",save:"💾 Save",wds:"WITHDRAWALS",users:"USERS",rew:"Reward per referral (Birr)",mn:"Min withdraw (Birr)",mr:"Referrals needed",b:"Birr",live:"LIVE PAYOUTS",nolog:"No payouts yet",paid:"paid",proof:"📸 Approve + Send Proof",posted:"Posted to log ✅",needref:"Referrals needed: ",minw:"Min withdraw: ",tap:"Tap",left:"Taps left",resets:"Resets in",upg:"UPGRADE TAP LIMIT",watch:"📺 Watch Ad",adof:"ads watched",maxlvl:"Max level reached 🔥",adsdone:"Ad watched ✅",adfail:"Ad not completed ❌",tapup:"Tap limit upgraded! 🚀",full:"Limit reached – wait for reset or upgrade"},
+am:{hi:"ሰላም",bal:"ቀሪ ሂሳብዎ",refs:"ጋባዦች",per:"ለአንድ ግብዣ",min:"ዝቅተኛ ክፍያ",unlock:"ገንዘብ ማውጫ መክፈቻ",ref:"ጋባዦች",link:"የግብዣ ሊንክዎ",share:"🚀 አጋራና ተቀበል",copy:"📋 ሊንክ ቅዳ",copied:"ተቀድቷል 🔗",home:"ዋና",join:"ቻናል",top:"ከፍተኛ",wd:"ማውጫ",admin:"አድሚን",must:"ብቁ ለመሆን ሁሉንም ቻናሎች ይቀላቀሉ",none:"እስካሁን የሚያስፈልግ ቻናል የለም።",jbtn:"ቀላቀል",verify:"✅ ተቀላቅያለሁ – አረጋግጥ",elig:"✔ ብቁ ነዎት",nelig:"✖ አልተረጋገጠም",notj:"ሁሉንም ቻናሎች አልተቀላቀሉም ❌",board:"🏆 ከፍተኛ ጋባዦች",first:"የመጀመሪያው ይሁኑ!",reqwd:"ገንዘብ ለማውጣት ጥያቄ",balance:"ቀሪ ሂሳብ",eligible:"ብቁነት",yes:"አዎ",joinfirst:"መጀመሪያ ቻናሎችን ይቀላቀሉ",addr:"ቴሌብር / ሲቢኢ የሂሳብ ቁጥር",wdall:"💸 ሁሉንም አውጣ",note:"ማረጋገጫው በይፋ ይለጠፋል በ",dupe:"⚠️ በዚህ መሣሪያ ሌላ አካውንት ተጠቅሟል። የግብዣ ሽልማት አይሰራልዎትም።",banned:"🚫 ታግደዋል",lvl:["🌱 ጀማሪ","🥉 ነሐስ","🥈 ብር","🥇 ወርቅ","💎 አልማዝ"],s1:"ብርዎን በመቁጠር ላይ…",s2:"ካዝናዎን በማዘጋጀት ላይ…",s3:"ወደ አድሚን በመላክ ላይ…",done:"ጥያቄ ተልኳል! 🎉",wait:"አድሚን ከፍሎ ማረጋገጫ ይለጥፋል።",ch:"ቻናሎች (ቦቱ አድሚን መሆን አለበት)",addch:"➕ ቻናል ጨምር",set:"ቅንብሮች",save:"💾 አስቀምጥ",wds:"የገንዘብ ጥያቄዎች",users:"ተጠቃሚዎች",rew:"ለአንድ ግብዣ ሽልማት (ብር)",mn:"ዝቅተኛ ማውጫ (ብር)",mr:"የሚያስፈልግ ጋባዥ",b:"ብር",live:"ቀጥታ ክፍያዎች",nolog:"እስካሁን ክፍያ የለም",paid:"ተከፍሏል",proof:"📸 ፍቀድ + ማረጋገጫ ላክ",posted:"ወደ ሎግ ተለጥፏል ✅",needref:"የሚያስፈልግ ጋባዥ: ",minw:"ዝቅተኛ ማውጫ: ",tap:"ንካ",left:"የቀሩ ንካዎች",resets:"ዳግም ይጀምራል በ",upg:"የንካ ገደብ ያሳድጉ",watch:"📺 ማስታወቂያ እይ",adof:"ማስታወቂያ ታይቷል",maxlvl:"ከፍተኛ ደረጃ ደርሰዋል 🔥",adsdone:"ማስታወቂያ ታይቷል ✅",adfail:"ማስታወቂያ አልተጠናቀቀም ❌",tapup:"የንካ ገደብ ተሻሽሏል! 🚀",full:"ገደብ ደርሷል – ዳግም እስኪጀምር ይጠብቁ ወይም ያሳድጉ"}};
+let L=localStorage.lang||(tg?.initDataUnsafe?.user?.language_code==="am"?"am":"en");
+const t=k=>I[L][k];
+function toggleLang(){L=L==="en"?"am":"en";localStorage.lang=L;document.documentElement.lang=L;render()}
+const money=n=>parseFloat((+n).toFixed(3))+" "+t("b");
+
+/* ============ DEVICE FINGERPRINT ============ */
+async function deviceId(){
+  const raw=[navigator.userAgent,screen.width,screen.height,screen.colorDepth,navigator.language,navigator.hardwareConcurrency,Intl.DateTimeFormat().resolvedOptions().timeZone,(()=>{try{const c=document.createElement("canvas").getContext("2d");c.font="14px Arial";c.fillText("swift",2,2);return c.canvas.toDataURL()}catch(e){return""}})()].join("|");
+  const h=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(raw));
+  return[...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+/* ============ API LAYER ============ */
+async function api(action,data={}){
+  if(CONFIG.API_BASE){const r=await fetch(CONFIG.API_BASE,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,data,initData:tg?.initData||"",device:await deviceId()})});return r.json()}
+  return demo(action,data);
+}
+function demo(a,d){ // local preview storage – use API_BASE for shared multi-user data
+  const D=JSON.parse(localStorage.swiftDB4||`{"users":{},"channels":[],"wd":[],"log":[],"set":{"reward":${CONFIG.REWARD},"min":${CONFIG.MIN_WITHDRAW},"minRefs":${CONFIG.MIN_REFS},"tapReward":${CONFIG.TAP_REWARD},"tapBase":${CONFIG.TAP_BASE},"tapStep":${CONFIG.TAP_STEP},"adsPer":${CONFIG.ADS_PER_UPGRADE},"maxLvl":${CONFIG.MAX_TAP_LEVEL}},"devices":{}}`);
+  const save=()=>localStorage.swiftDB4=JSON.stringify(D);let u=D.users[TU.id];const S=D.set;
+  const out=(o={})=>{save();return{ok:true,user:D.users[TU.id],set:S,channels:D.channels,log:D.log.slice(-15).reverse(),...o}};
+  if(a==="init"){if(!u){u=D.users[TU.id]={id:TU.id,name:TU.first_name,bal:0,refs:0,by:null,joined:Date.now(),verified:false,taps:0,tapWin:0,tapLvl:0,adsSeen:0};
+    const dev=localStorage.demoDev||(localStorage.demoDev=Math.random().toString(36).slice(2));
+    if(D.devices[dev])u.dupe=true;else D.devices[dev]=TU.id;
+    if(REF&&REF!=TU.id&&D.users[REF]&&!u.dupe)u.by=REF}return out()}
+  if(a==="verify"){u.verified=true;if(u.by&&!u.paid&&D.users[u.by]){D.users[u.by].bal+=S.reward;D.users[u.by].refs++;u.paid=true}return out()}
+  if(a==="tap"){const now=Date.now();if(!u.tapWin||now-u.tapWin>=36e5){u.tapWin=now;u.taps=0}const lim=S.tapBase+u.tapLvl*S.tapStep,k=Math.max(0,Math.min(d.n,lim-u.taps));u.taps+=k;u.bal=+(u.bal+k*S.tapReward).toFixed(3);return out()}
+  if(a==="adwatch"){if(u.tapLvl>=S.maxLvl)return out();u.adsSeen++;if(u.adsSeen>=S.adsPer){u.adsSeen=0;u.tapLvl++;return out({up:true})}return out()}
+  if(a==="log")return out();
+  if(a==="withdraw"){if(u.refs<S.minRefs)return{ok:false,msg:t("needref")+S.minRefs};if(u.bal<S.min)return{ok:false,msg:t("minw")+S.min+" "+t("b")};
+    D.wd.push({id:Date.now(),uid:u.id,name:u.name,amt:u.bal,addr:d.addr,st:"pending"});u.bal=0;return out()}
+  if(a==="board")return out({board:Object.values(D.users).sort((x,y)=>y.refs-x.refs).slice(0,10).map(x=>({name:x.name,refs:x.refs}))});
+  if(TU.id!==CONFIG.OWNER_ID)return{ok:false,msg:"Not admin"};
+  if(a==="admin")return out({users:Object.values(D.users),wd:D.wd});
+  if(a==="addch"){D.channels.push(d.ch);return out()}
+  if(a==="delch"){D.channels=D.channels.filter(c=>c!==d.ch);return out()}
+  if(a==="set"){Object.assign(S,d);return out({msg:"✔"})}
+  if(a==="approve"){const w=D.wd.find(x=>x.id==d.id);w.st="paid";D.log.push({uid:w.uid,name:w.name,amt:w.amt,ts:Date.now()});return out({wd:D.wd,users:Object.values(D.users)})}
+  if(a==="reject"){const w=D.wd.find(x=>x.id==d.id);w.st="rejected";D.users[w.uid].bal+=w.amt;return out({wd:D.wd,users:Object.values(D.users)})}
+  if(a==="ban"){D.users[d.id].banned=true;return out({wd:D.wd,users:Object.values(D.users)})}
+}
+
+/* ================= UI ================= */
+let ST={tab:"home"};
+const toast=m=>{const e=document.createElement("div");e.className="toast";e.textContent=m;document.body.appendChild(e);tg?.HapticFeedback?.notificationOccurred("success");setTimeout(()=>e.remove(),2400)};
+const link=()=>CONFIG.APP_SHORT_NAME?`https://t.me/${CONFIG.BOT_USERNAME}/${CONFIG.APP_SHORT_NAME}?startapp=${TU.id}`:`https://t.me/${CONFIG.BOT_USERNAME}?start=${TU.id}`;
+const copy=x=>{navigator.clipboard?.writeText(x||link());toast(t("copied"))};
+const share=()=>{const u=`https://t.me/share/url?url=${encodeURIComponent(link())}&text=${encodeURIComponent(L==="am"?"🚀 Swift Invite Earn ተቀላቀሉ፤ ጓደኞችን ጋብዘው ብር ያግኙ!":"🚀 Join Swift Invite Earn & get paid for inviting friends!")}`;tg?tg.openTelegramLink(u):window.open(u)};
+const lvl=r=>t("lvl")[r>=100?4:r>=50?3:r>=20?2:r>=5?1:0];
+const joinCh=c=>{const u="https://t.me/"+c.replace("@","");tg?tg.openTelegramLink(u):window.open(u)};
+const tabs=()=>[["home","🏠",t("home")],["tap","👆",t("tap")],["tasks","📢",t("join")],["board","🏆",t("top")],["wd","💸",t("wd")],...(isOwner?[["admin","🛡️",t("admin")]]:[])];
+function navr(){$("#nav").innerHTML=tabs().map(x=>`<a class="${ST.tab===x[0]?"on":""}" onclick="go('${x[0]}')"><i>${x[1]}</i>${x[2]}</a>`).join("")}
+async function go(x){await flush();tg?.HapticFeedback?.selectionChanged();ST.tab=x;if(x==="board")Object.assign(ST,await api("board"));if(x==="admin")Object.assign(ST,await api("admin"));render()}
+async function act(a,d,after){const r=await api(a,d);if(r.msg)toast(r.msg);if(r.ok!==false)Object.assign(ST,r);if(after)await after(r);render()}
+document.addEventListener("pointerdown",e=>{const b=e.target.closest("button");if(!b)return;const r=document.createElement("span"),s=Math.max(b.offsetWidth,40),p=b.getBoundingClientRect();r.className="rip";r.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-p.left-s/2}px;top:${e.clientY-p.top-s/2}px`;b.appendChild(r);setTimeout(()=>r.remove(),500);tg?.HapticFeedback?.impactOccurred("light")});
+
+const logHTML=()=>(ST.log||[]).map(x=>`<div class="lg"><div class="ic">💸</div><div class="u">${mask(x.name)}<br><span class="mut">🆔 ${mask(x.uid)} · ${ago(x.ts)}</span></div><div class="a">+${money(x.amt)}</div></div>`).join("")||`<div class="mut" style="margin-top:8px">${t("nolog")}</div>`;
+
+function render(){
+  navr();$("#lang").textContent=L==="en"?"አማ":"EN";
+  const u=ST.user,S=ST.set;if(!u)return;const el=$("#app");
+  if(u.banned){el.innerHTML=`<div class="card bad">${t("banned")}</div>`;return}
+  let h="";
+  if(ST.tab==="home"){
+    const pr=Math.min(100,u.refs/S.minRefs*100),pic=TU.photo_url,ini=(TU.first_name||"?")[0].toUpperCase();
+    h=`<div class="card"><div class="prof">${pic?`<img class="av" src="${pic}" onerror="this.outerHTML='<div class=av>${ini}</div>'">`:`<div class="av">${ini}</div>`}
+    <div><div class="hi">${t("hi")}, ${TU.first_name||""} <span>👋</span></div><div class="id" onclick="copy('${TU.id}')">🆔 ${TU.id}</div><div class="mut" style="margin-top:6px">${lvl(u.refs)}</div></div></div></div>
+    <div class="card"><div class="mut">${t("bal")}</div><div class="bal">${money(u.bal)}</div>
+    <div class="grid"><div><b>${u.refs}</b><span class="mut">${t("refs")}</span></div><div><b>${S.reward}</b><span class="mut">${t("per")}</span></div><div><b>${S.min}</b><span class="mut">${t("min")}</span></div></div></div>
+    <div class="card"><div class="mut">${t("unlock")} • ${u.refs}/${S.minRefs} ${t("ref")}</div><div class="bar"><i style="width:${pr}%"></i></div></div>
+    <div class="card"><div class="mut">${t("link")}</div><input readonly value="${link()}" onclick="copy()"><button class="g" onclick="share()">${t("share")}</button><button class="alt" onclick="copy()">${t("copy")}</button></div>
+    <div class="card"><div class="live"><span class="dot"></span><span class="mut">${t("live")}</span></div><div id="logbox">${logHTML()}</div></div>
+    ${u.dupe?`<div class="card bad">${t("dupe")}</div>`:""}`;
+  }
+  if(ST.tab==="tasks")h=`<div class="card"><div class="mut">${t("must")}</div>${ST.channels.length?ST.channels.map(c=>`<div class="row"><span>📢 ${c}</span><button class="b" style="width:auto;padding:7px 16px;margin:0" onclick="joinCh('${c}')">${t("jbtn")}</button></div>`).join(""):`<div class="mut" style="margin-top:8px">${t("none")}</div>`}
+    <button class="g" onclick="verifyJoin()">${t("verify")}</button><div class="${u.verified?"ok":"bad"}" style="margin-top:12px">${u.verified?t("elig"):t("nelig")}</div></div>`;
+  if(ST.tab==="board")h=`<div class="card"><div class="mut">${t("board")}</div>${(ST.board||[]).map((b,i)=>`<div class="row"><span>${["🥇","🥈","🥉"][i]||(i+1)+"."} ${mask(b.name)}</span><span class="ok">${b.refs}</span></div>`).join("")||`<div class="mut">${t("first")}</div>`}</div>`;
+  if(ST.tab==="wd")h=`<div class="card"><div class="mut">${t("reqwd")}</div>
+    <div class="row"><span>${t("balance")}</span><span class="bal" style="font-size:16px">${money(u.bal)}</span></div>
+    <div class="row"><span>${t("min")}</span><span>${money(S.min)}</span></div>
+    <div class="row"><span>${t("mr")}</span><span class="${u.refs>=S.minRefs?"ok":"bad"}">${u.refs}/${S.minRefs}</span></div>
+    <div class="row"><span>${t("eligible")}</span><span class="${u.verified?"ok":"bad"}">${u.verified?t("yes"):t("joinfirst")}</span></div>
+    <input id="addr" placeholder="${t("addr")}"><button onclick="doWd()">${t("wdall")}</button>
+    <div class="mut" style="margin-top:10px">${t("note")} ${CONFIG.LOG_CHANNEL}</div></div>`;
+  if(ST.tab==="tap")h=tapUI();
+  if(ST.tab==="admin")h=adminUI();
+  el.innerHTML=`<div class="view">${h}</div>`;
+}
+async function verifyJoin(){
+  const ok=await joinedAll(ST.channels);
+  if(!ok){tg?.HapticFeedback?.notificationOccurred("error");return toast(t("notj"))}
+  await act("verify");toast(t("elig"));
+}
+function adminUI(){
+  const S=ST.set,w=ST.wd||[];
+  return `<div class="card"><div class="mut">🛡️ ${t("ch")}</div>${ST.channels.map(c=>`<div class="row"><span>${c}</span><button class="red" onclick="act('delch',{ch:'${c}'},()=>go('admin'))">✕</button></div>`).join("")}
+  <input id="nc" placeholder="@channelusername"><button class="g" onclick="act('addch',{ch:$('#nc').value.trim()},()=>go('admin'))">${t("addch")}</button></div>
+  <div class="card"><div class="mut">${t("set")}</div>
+  <input id="s1" type="number" value="${S.reward}" placeholder="${t("rew")}"><input id="s3" type="number" value="${S.min}" placeholder="${t("mn")}"><input id="s4" type="number" value="${S.minRefs}" placeholder="${t("mr")}"><input id="s5" type="number" value="${S.tapBase}" placeholder="Base taps / hour"><input id="s6" type="number" value="${S.adsPer}" placeholder="Ads per upgrade">
+  <button class="b" onclick="act('set',{reward:+$('#s1').value,min:+$('#s3').value,minRefs:+$('#s4').value,tapBase:+$('#s5').value,adsPer:+$('#s6').value})">${t("save")}</button></div>
+  <div class="card"><div class="mut">${t("wds")}</div>${w.map(x=>`<div class="row"><span>${x.name} · ${money(x.amt)}<br><span class="mut">${x.addr} · ${x.st}</span></span>${x.st==="pending"?`<span><button class="red" style="background:#19e68c" onclick="proof(${x.id})">✓</button> <button class="red" onclick="act('reject',{id:${x.id}},()=>go('admin'))">✕</button></span>`:""}</div>`).join("")||"—"}
+  <input type="file" id="pf" accept="image/*" hidden></div>
+  <div class="card"><div class="mut">${t("users")} (${(ST.users||[]).length})</div>${(ST.users||[]).slice(0,30).map(x=>`<div class="row"><span>${x.name} <span class="mut">#${x.id}</span></span><span>${x.refs} · ${(+x.bal).toFixed(1)} <button class="red" onclick="act('ban',{id:${x.id}},()=>go('admin'))">ban</button></span></div>`).join("")}</div>`;
+}
+/* approve → admin picks screenshot → bot posts it to the log channel */
+function proof(id){
+  const f=$("#pf");f.onchange=async()=>{
+    const x=ST.wd.find(w=>w.id==id),file=f.files[0];if(!file)return;
+    const fd=new FormData();fd.append("chat_id",CONFIG.LOG_CHANNEL);fd.append("photo",file);
+    fd.append("caption",`✅ PAYOUT SENT\n👤 ${mask(x.name)}\n🆔 ${mask(x.uid)}\n💰 ${x.amt} Birr\n\n⚡ Swift Invite Earn`);
+    const r=await bot("sendPhoto",{},fd);
+    await act("approve",{id},()=>go("admin"));toast(r.ok?t("posted"):"⚠️ Bot must be admin in "+CONFIG.LOG_CHANNEL);
+  };f.click();
+}
+
+/* ===== WITHDRAW ANIMATION ===== */
+async function doWd(){
+  await flush();const u=ST.user;if(!u.verified)return toast(t("joinfirst"));
+  const addr=$("#addr").value.trim();if(!addr)return toast(t("addr"));
+  const amt=u.bal,refs=u.refs;const r=await api("withdraw",{addr});
+  if(r.ok===false)return toast(r.msg);
+  Object.assign(ST,r);
+  bot("sendMessage",{chat_id:CONFIG.OWNER_ID,text:`💸 WITHDRAW REQUEST\n👤 ${TU.first_name} (${TU.id})\n💰 ${amt} Birr\n🏦 ${addr}\n👥 Referrals: ${refs}`});
+  const o=document.createElement("div");o.className="fx";
+  o.innerHTML=`<div class="fxcard"><div id="stage"><div class="vault" id="v">👛</div><div class="step" id="st">${t("s1")}</div></div></div>`;
+  document.body.appendChild(o);const card=o.querySelector(".fxcard");
+  for(let i=0;i<8;i++){const c=document.createElement("div");c.className="coin";c.textContent="🪙";c.style.left=(12+Math.random()*70)+"%";c.style.animationDelay=i*.09+"s";card.appendChild(c)}
+  const sl=ms=>new Promise(r=>setTimeout(r,ms));
+  await sl(1100);$("#st").textContent=t("s2");$("#v").textContent="💼";
+  await sl(700);$("#st").textContent=t("s3");$("#v").classList.add("fly");
+  await sl(800);
+  $("#stage").innerHTML=`<svg class="chk" viewBox="0 0 110 110" fill="none" stroke="#19e68c" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><circle cx="55" cy="55" r="46"/><path d="M33 56l16 16 29-32"/></svg><div class="bal" style="font-size:34px;margin-top:10px">${money(amt)}</div><div class="step ok">${t("done")}</div><div class="mut">${t("wait")}</div><button class="g" onclick="this.closest('.fx').remove()">OK</button>`;
+  tg?.HapticFeedback?.notificationOccurred("success");
+  for(let i=0;i<45;i++){const c=document.createElement("div");c.className="conf";c.style.left=Math.random()*100+"vw";c.style.background=["#2ea8ff","#19e68c","#ff8a1f","#fff"][i%4];c.style.animationDelay=Math.random()*.5+"s";c.style.borderRadius=i%2?"50%":"2px";document.body.appendChild(c);setTimeout(()=>c.remove(),2800)}
+  render();
+}
+/* ===== TAP TAP ===== */
+let pend=0,flT;
+function tapState(){const u=ST.user,S=ST.set;if(u.tapWin&&Date.now()-u.tapWin>=36e5){u.taps=0;u.tapWin=0}const lim=S.tapBase+u.tapLvl*S.tapStep;return{lim,left:Math.max(0,lim-u.taps)}}
+function tapUI(){const u=ST.user,S=ST.set,{lim,left}=tapState();
+return `<div class="card"><div class="mut">${t("bal")}</div><div class="bal" id="tapbal">${money(u.bal)}</div>
+<div class="tapwrap"><div class="tapbtn ${left?"":"off"}" id="tapbtn" onpointerdown="doTap(event)"><svg width="140" height="140" viewBox="0 0 100 100"><polygon points="50,4 58,30 80,20 70,42 96,50 70,58 82,84 56,70 50,96 42,70 18,82 30,58 4,50 30,42 18,20 42,30" fill="#eaf6ff" stroke="#eaf6ff" stroke-width="9" stroke-linejoin="round"/><ellipse cx="42" cy="50" rx="4.5" ry="6.5" fill="#0a4fa8"/><ellipse cx="58" cy="50" rx="4.5" ry="6.5" fill="#0a4fa8"/></svg></div></div>
+<div class="row"><span>${t("left")}</span><span class="ok" id="tapleft">${left}/${lim}</span></div>
+<div class="bar"><i id="tapbar" style="width:${left/lim*100}%"></i></div>
+<div class="row"><span>${t("resets")}</span><span id="tapreset">—:—</span></div></div>
+<div class="card"><div class="mut">⚡ ${t("upg")} • LV ${u.tapLvl}/${S.maxLvl}</div>
+<div class="row"><span>+${S.tapStep} / h</span><span class="ok">${u.adsSeen}/${S.adsPer} ${t("adof")}</span></div>
+<div class="bar"><i style="width:${u.adsSeen/S.adsPer*100}%"></i></div>
+${u.tapLvl>=S.maxLvl?`<div class="ok" style="margin-top:10px">${t("maxlvl")}</div>`:`<button class="b" onclick="watchAd()">${t("watch")}</button>`}</div>`}
+function updTap(){if(ST.tab!=="tap")return;const a=$("#tapbal");if(!a)return;const u=ST.user,{lim,left}=tapState();a.textContent=money(u.bal);$("#tapleft").textContent=left+"/"+lim;$("#tapbar").style.width=left/lim*100+"%";$("#tapbtn").classList.toggle("off",!left)}
+function doTap(e){const u=ST.user,S=ST.set;if(!tapState().left){tg?.HapticFeedback?.notificationOccurred("error");return toast(t("full"))}
+ if(!u.tapWin)u.tapWin=Date.now();u.taps++;u.bal=+(u.bal+S.tapReward).toFixed(3);pend++;
+ tg?.HapticFeedback?.impactOccurred("light");
+ const b=$("#tapbtn");b.classList.add("p");setTimeout(()=>b.classList.remove("p"),70);
+ const f=document.createElement("div");f.className="fl";f.textContent="+"+S.tapReward;f.style.left=e.clientX-18+(Math.random()*30-15)+"px";f.style.top=e.clientY-34+"px";document.body.appendChild(f);setTimeout(()=>f.remove(),900);
+ updTap();clearTimeout(flT);flT=setTimeout(flush,600)}
+async function flush(){if(!pend||!ST.user)return;const n=pend;pend=0;const r=await api("tap",{n});if(r.user){ST.user=r.user;if(pend){ST.user.taps+=pend;ST.user.bal=+(ST.user.bal+pend*ST.set.tapReward).toFixed(3)}updTap()}}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)flush()});
+setInterval(()=>{if(ST.tab!=="tap"||!ST.user)return;const u=ST.user,el=$("#tapreset");if(!el)return;if(u.tapWin){const r=36e5-(Date.now()-u.tapWin);if(r<=0){u.taps=0;u.tapWin=0;updTap();el.textContent="—:—"}else el.textContent=String(Math.floor(r/6e4)).padStart(2,"0")+":"+String(Math.floor(r/1e3)%60).padStart(2,"0")}else el.textContent="—:—"},1000);
+/* ===== ADS (AdsGram rewarded video) ===== */
+function showAd(){return new Promise((res,rej)=>{
+ if(CONFIG.ADSGRAM_BLOCK_ID&&window.Adsgram){window.Adsgram.init({blockId:CONFIG.ADSGRAM_BLOCK_ID}).show().then(()=>res()).catch(()=>rej())}
+ else if(!CONFIG.API_BASE){ // demo ad for testing only
+  const o=document.createElement("div");o.className="fx";o.innerHTML=`<div class="fxcard"><div class="vault">📺</div><div class="step" id="adt">DEMO AD 5</div><div class="mut">Add ADSGRAM_BLOCK_ID for real ads</div></div>`;document.body.appendChild(o);let n=5;
+  const iv=setInterval(()=>{n--;if(n<=0){clearInterval(iv);o.remove();res()}else $("#adt").textContent="DEMO AD "+n},1000)}
+ else rej()})}
+async function watchAd(){await flush();try{await showAd()}catch(e){return toast(t("adfail"))}
+ const r=await api("adwatch");if(r.ok!==false&&r.user){ST.user=r.user;toast(r.up?t("tapup"):t("adsdone"));
+  if(r.up){tg?.HapticFeedback?.notificationOccurred("success");for(let i=0;i<30;i++){const c=document.createElement("div");c.className="conf";c.style.left=Math.random()*100+"vw";c.style.background=["#2ea8ff","#19e68c","#ff8a1f","#fff"][i%4];c.style.animationDelay=Math.random()*.4+"s";document.body.appendChild(c);setTimeout(()=>c.remove(),2600)}}}
+ render()}
+/* live log refresh */
+setInterval(async()=>{if(ST.tab!=="home"||!ST.user)return;const r=await api("log");const n=JSON.stringify(r.log),o=JSON.stringify(ST.log);if(n!==o){ST.log=r.log;const b=$("#logbox");if(b)b.innerHTML=logHTML()}},6000);
+document.documentElement.lang=L;
+api("init",{ref:REF,user:TU}).then(r=>{Object.assign(ST,r);render()});
+</script></body></html>
